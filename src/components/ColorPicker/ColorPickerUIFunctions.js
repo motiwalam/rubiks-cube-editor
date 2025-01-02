@@ -1,6 +1,66 @@
 import cube from "../../cubeFunctions/cube";
 import solverMain from "../../solvers/solverMain";
 
+// each rubiksObject is an array of 27 pieces
+// each piece is itself an array
+// piece contains lots of info, but the only
+// stuff pertinent to this function is the first
+// 6 elements. at index i is the color visible in
+// the direction of face i
+// given our orientation, the face to index map is
+const faceToIndex = {
+  U: 3, D: 0,
+  F: 1, B: 5,
+  L: 4, R: 2,
+};
+
+// index of pieces in each face
+// labeling is layer by layer, bottom to top
+// within a layer, labeling starts at front left
+// goes to back right
+const faceToPieces = {
+  // U: [24, 25, 26, 21, 22, 23, 18, 19, 20],
+  // D: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  // F: [18, 19, 20, 9, 10, 11, 0, 1, 2],
+  // B: [26, 25, 24, 17, 16, 15, 8, 7, 6],
+  // L: [24, 21, 18, 15, 12, 9, 6, 3, 0],
+  // R: [20, 23, 26, 11, 14, 17, 2, 5, 8],
+  U: [
+      '020', '120', '220',
+      '021', '121', '221',
+      '022', '122', '222'
+    ],
+  D: [
+      '002', '102', '202',
+      '001', '101', '201',
+      '000', '100', '200',
+    ],
+  F: [
+      '022', '122', '222',
+      '012', '112', '212',
+      '002', '102', '202'
+    ],
+  B: [
+      '220', '120', '020',
+      '210', '110', '010',
+      '200', '100', '000'
+    ],
+  L: [
+      '020', '021', '022',
+      '010', '011', '012',
+      '000', '001', '002'
+    ],
+  R: [
+      '222', '221', '220',
+      '212', '211', '210',
+      '202', '201', '200'
+    ],
+};
+
+const middleToPiece = Object.fromEntries(Object.entries(faceToPieces).map(([face, ps]) => [face, ps[4]]))
+
+const faceOrder = Array.from("URFDLB");
+
 const ColorPickerUIFunctions = {
     alignQuadrant(_piece,size){
         let pos = _piece.position;
@@ -551,7 +611,81 @@ const ColorPickerUIFunctions = {
     
         if(!obj.error) {obj.success = true;obj.newGenerated = newGenerated}
         return obj;
+    },
+
+    cubeCoordinateMap : ({rubiksObject}) => {
+      return Object.fromEntries(
+        rubiksObject.map(o => [
+          `${o[6]}${o[7]}${o[8]}`,
+          o
+        ])
+      );
+    },
+
+    computeCubeOrientation: ({rubiksObject}) => {
+      const cm = ColorPickerUIFunctions.cubeCoordinateMap({rubiksObject});
+      return Object.fromEntries(
+        [['X', 'grey']].concat(
+          Object.entries(middleToPiece).map(([f, p]) => {
+            return [f, cm[p][faceToIndex[f]]];
+          })
+        )
+      );
+    },
+
+    cubeDefinitionString: ({rubiksObject}) => {
+      const cm = ColorPickerUIFunctions.cubeCoordinateMap({rubiksObject});
+      const cubeOrientation = ColorPickerUIFunctions.computeCubeOrientation({rubiksObject});
+      const colorToFace = Object.fromEntries(Object.entries(cubeOrientation).map(([k,v]) => [v,k]));
+
+      const desc = faceOrder.flatMap(
+        face => faceToPieces[face].map(
+          piece => colorToFace[cm[piece][faceToIndex[face]]]
+        )
+      );
+      return desc.join("");
+    },
+
+    emptyCube: ({rubiksObject}) => {
+      return rubiksObject.map((rubik) => {
+        if (rubik.includes('middle')) return rubik;
+        return rubik.map((x,i) => {
+          if (i >= 6) return x;
+          return 'grey';
+        });
+      });
+    },
+
+    definitionStringToCube: (defstr, orientation) => {
+      const cD = 3;
+      const cD2 = cD*cD;
+      const newCube = [...cube.generateBlank(cD,cD,cD)]
+      const cm = ColorPickerUIFunctions.cubeCoordinateMap({rubiksObject: newCube});
+
+      for (const [face, pieces] of Object.entries(faceToPieces)) {
+        const faceIdx = faceOrder.indexOf(face);
+        pieces.forEach((piece, idx) => {
+          const newFace = defstr[cD2 * faceIdx + idx];
+          cm[piece][faceToIndex[face]] = orientation[newFace];
+        });
+      }
+
+      return newCube;
+    },
+
+    computeGenerator: async (desc) => {
+      const result = await fetch(
+        'https://www.cs.toronto.edu/~motiwala/cube-generator.cgi?' + desc
+      ).then(r => r.text());
+
+      if (result.toLowerCase().includes('fail')) return result;
+
+      const moveStr = result.split('\n')[0];
+
+      return moveStr;
     }
 }
+
+window.cpuf = ColorPickerUIFunctions;
 
 export default ColorPickerUIFunctions;

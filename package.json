@@ -1,6 +1,6 @@
 {
-  "homepage": "https://merpig.github.io/RubiksProgram/",
-  "name": "rubiksprogram",
+  "homepage": "https://www.cs.toronto.edu/~motiwala/CubeExplorer/",
+  "name": "cubeexplorer",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -29,8 +29,8 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

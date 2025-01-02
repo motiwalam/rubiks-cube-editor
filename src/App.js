@@ -41,7 +41,7 @@ class App extends Component {
     cameraX : 5,          // Camera position x
     cameraY : -5,         // Camera position y
     cameraZ : 2,          // Camera position z
-    currentFunc : "None", // Variable used to display current function
+    currentFunc : "Color Picker", // Variable used to display current function
     moveLog : "",         // Keeps a log of all moves
     moveSet : [],         // Algorithms queue moves through this variable
     prevSet : [],
@@ -285,6 +285,8 @@ class App extends Component {
     let tempObj = [...this.state.rubiksObject]
     for(let i = 0; i < tempObj.length; i++){
       let tempCube = [...tempObj[i]];
+      // don't allow changing center face color
+      if (tempCube.includes('middle')) continue;
       if(tempCube[6]===pos.x && tempCube[7]===pos.y && tempCube[8]===pos.z){
         tempCube[side]=color;
         tempObj[i] = [...tempCube];
@@ -475,9 +477,14 @@ class App extends Component {
 
   beginColorPicker = () => {
     let cD = this.state.cubeDimension;
-    if(this.state.currentFunc !== "None") return;
-    const blank = [...cube.generateBlank(cD,cD,cD)];
-    this.setState({currentFunc : "Color Picker",rubiksObject: [...blank]},()=>{
+    // if(this.state.currentFunc !== "None") return;
+    // const newCube = [...cube.generateBlank(cD,cD,cD)];
+    const desc = ColorPickerUIFunctions.cubeDefinitionString(this.state);
+    const orientation = ColorPickerUIFunctions.computeCubeOrientation(this.state);
+
+    const newCube = ColorPickerUIFunctions.definitionStringToCube(desc, orientation);
+    
+    this.setState({currentFunc : "Color Picker", rubiksObject: newCube},()=>{
       this.reloadTurnedPieces('cp');
     });
   }
@@ -729,11 +736,14 @@ class App extends Component {
 
   }
 
-  menuSetState = (obj) =>{
+  menuSetState = (obj, cb) =>{
     //console.log(obj);
     this.setState(obj,()=>{
       if(obj.activeAlgo){
         this.reloadTurnedPieces('all');
+      }
+      if (cb !== undefined) {
+        cb();
       }
     });
   }
@@ -1252,7 +1262,8 @@ class App extends Component {
 
   // Renders html to the index.html page
   render() {
-    
+    console.log(this.state);
+
     return (
       <div className="App" style={{width:"max-content"}}>
         
@@ -1320,15 +1331,16 @@ class App extends Component {
           setColorPickedCube={this.setColorPickedCube}
           cpErrors={this.state.cpErrors}
           runCheckColors={this.runCheckColors}
+          reloadCube={this.reloadTurnedPieces}
 
           //Solver
-          beginSolve={this.beginSolve}
-          stopSolve={this.stopSolve}
-          playOne={this.playOne}
-          rewindOne={this.rewindSolve}
-          reload={this.reloadTurnedPieces}
+          // beginSolve={this.beginSolve}
+          // stopSolve={this.stopSolve}
+          // playOne={this.playOne}
+          // rewindOne={this.rewindSolve}
+          // reload={this.reloadTurnedPieces}
         />
-  
+
       </div>
     );
   }

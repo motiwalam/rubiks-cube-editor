@@ -24,7 +24,7 @@ const Navbar = props => {
           <p className="navbar-brand" style={{ color: "lightgray" }}><b>{props.title}</b></p>
 
           {/*Open model here. Show bunch of settings. Pass changeSettings down to component to apply changes*/}
-          <div className="settingsDropDown">
+          {/* <div className="settingsDropDown">
             <DropdownButton className="settings" aria-label="settings" id="settings" title={<i className='fa fa-cog'></i>}>
               <ul>
 
@@ -48,12 +48,12 @@ const Navbar = props => {
               </ul>
 
             </DropdownButton>
-          </div>
-          <div className="cubesDropdown">
+          </div> */}
+          {/* <div className="cubesDropdown">
             <DropdownButton title="Cubes" className="cubes">
               {navCubes}
             </DropdownButton>
-          </div>
+          </div> */}
         </li>
       </ul>
       <div style={{ float: "right", height: "100%" }} >
@@ -83,11 +83,15 @@ const Navbar = props => {
                   </div>
                   <hr style={{ backgroundColor: "lightgray", width: "60%" }}></hr>
                   <div style={{}}>
-                  <div style={{ marginBottom: "0", paddingBottom: "" }}>Author: Sasha Peters <br></br> <a target="#" href="https://www.github.com/merpig"><i className="fa fa-github" style={{ fontSize: "36px", marginRight: "10px" }}></i></a><a target="#" href="https://www.linkedin.com/in/alexandr-sasha-peters-8a2489168/"><i className="fa fa-linkedin" style={{ fontSize: "36px" }}></i></a></div>
+                  <div> Use the color picker to generate patterns on the cube! </div>
+                  <hr style={{ backgroundColor: "lightgray", width: "60%" }}></hr>
+                  <div> 3D Rubik's cube model by: Sasha Peters <a href="https://www.github.com/merpig"> (github) </a> <a href="https://www.linkedin.com/in/alexandr-sasha-peters-8a2489168/">(linkedin)</a>  </div>
+                  <hr style={{ backgroundColor: "lightgray", width: "60%" }}></hr>
+                  <div> Rubik's cube pattern generator by: Mustafa Motiwala <a href="https://www.github.com/motiwalam"> (github) </a> <a href="https://www.linkedin.com/in/mustafa-motiwala-3dot14159/">(linkedin)</a>  </div>
                   <hr style={{ backgroundColor: "lightgrey" }}></hr>
-                  <div style={{ color: "white", backgroundColor: "", textAlign: "center" }}>
+                  {/* <div style={{ color: "white", backgroundColor: "", textAlign: "center" }}>
                       site design / cube © 2020 RubiksProgram
-                  </div>
+                  </div> */}
                   </div>
                 </div>
               </div>

@@ -9,7 +9,8 @@ const ColorPicker = (props) => {
         'red':[255,0,0],
         'yellow':[255,255,0],
         'orange':[255,165,0],
-        'green':[0,255,0]
+        'green':[0,255,0],
+        'grey': [100,100,100],
     }
 
     const capitalized = props.color.charAt(0).toUpperCase() + props.color.slice(1);

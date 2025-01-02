@@ -66,14 +66,14 @@
 
 .sideMenuBox0{
     padding: 4px;
-    height:60vh;
+    height:800px;
     width:100%;
     position: absolute;
     top: 72px;
 }
 
 .sideMenuBox1{
-    height:49%;
+    height:65%;
     width:100%;
     border-radius: .25rem;
     position: relative;
